@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        #term {
+            font-size: vh;
+        }
+
+        .flip {
+            text-align: center;
+            font-size: 5vh;
+            outline: none;
+            cursor: pointer;
+            width: 10vh;
+            display: inline-block;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .yes {
+            position: absolute;
+            bottom: 2%; /* Align to bottom */
+            right: 21%; /* Align to center horizontally */
+            transform: translateX(50%); /* Adjust position */
+            width: 40vw;
+            height: 40vh;
+            font-size: 10vw;
+        }
+
+        .no {
+            position: absolute;
+            bottom: 2%; /* Align to bottom */
+            left: 21%; /* Align to center horizontally */
+            transform: translateX(-50%); /* Adjust position */
+            width: 40vw;
+            height: 40vh;
+            font-size: 8vw;
+        }
+
+        #textbox {
+            top: 50%;
+            left: 50%;
+            width: 80vw;
+            height: 5vh; 
+            position: absolute;
+            transform: translate(-50%, -200%);
+            font-size: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id = "term">Term</h1>
+        <button class="flip" id="flip">Flip</button>
+        <button class="yes" id="yes">Know It</button>
+        <button class="no" id="no">Don't Know</button>
+        <input type="text" id="textbox" name="textbox">
+    </div>
+    <script>
+        let terms = {
+    'The subject of this painting is in the pudica stance' : 'The Birth of Venus - Sandro Botticelli',
+    'In this painting, Chloris holds on to Zephyrus as he flies through the air' : 'The Birth of Venus - Sandro Botticelli',
+    'Charles Mack controversially described this painting as a piece of Medici propaganda' : 'The Birth of Venus - Sandro Botticelli',
+    'The subject of this painting is blown towards shore' : 'The Birth of Venus - Sandro Botticelli',
+    'In this painting, a figure (Nymph or Hora) on right side of work offers the title figure a pink cloak made from flowers' : 'The Birth of Venus - Sandro Botticelli',
+    'Zephyrus and Chloris are featured on the left side of this painting' : 'The Birth of Venus - Sandro Botticelli',
+    'The land in this painting is regarded as either Cyprus or Cythera' : 'The Birth of Venus - Sandro Botticelli',
+    'This painting features a nude deity on a seashell' : 'The Birth of Venus - Sandro Botticelli',
+    'Vasari identified the figure on the left of this painting as Aura' : 'The Birth of Venus - Sandro Botticelli'
+};
+
+let failed = {};
+
+let shuffledKeys = {};
+let shuffledValues = {};
+const fella = document.getElementById('term');
+let currentKey = "";
+let currentIndex = 0;
+
+window.onload = function() {
+        
+    // Convert object to array of key-value pairs
+    const entries = Object.entries(terms);
+
+    // Shuffle the array
+    for (let i = entries.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [entries[i], entries[j]] = [entries[j], entries[i]];
+    }
+
+    // Convert array back to object
+    const shuffledTerms = Object.fromEntries(entries);
+    shuffledKeys = Object.keys(shuffledTerms);
+    shuffledValues = Object.values(shuffledTerms);
+    currentKey = shuffledKeys[0];
+    console.log(shuffledTerms);
+    fella.textContent = shuffledKeys[0];
+}
+
+const yes = document.getElementById('yes');
+yes.addEventListener('click', function() {
+    currentIndex++;
+    if (currentIndex === shuffledKeys.length) finished();
+    else goNext();
+});
+
+const no = document.getElementById('no');
+no.addEventListener('click', function() {
+    currentIndex++;
+    failed[currentKey] = terms[currentKey];
+    if (currentIndex === shuffledKeys.length) finished();
+    else goNext();
+});
+
+const flip = document.getElementById('flip');
+flip.addEventListener('click', function() {
+    if (shuffledKeys.includes(fella.textContent)) {
+        fella.textContent = terms[fella.textContent];
+    }
+    else fella.textContent = currentKey;
+});
+
+function goNext() {
+    currentKey = shuffledKeys[currentIndex];
+    fella.textContent = currentKey;
+}
+
+function finished() {
+    alert('Finished!')
+    terms = failed;
+    failed = {};
+    console.log(failed);
+    // Convert object to array of key-value pairs
+    const entries = Object.entries(terms);
+
+    // Shuffle the array
+    for (let i = entries.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [entries[i], entries[j]] = [entries[j], entries[i]];
+    }
+
+    // Convert array back to object
+    const shuffledTerms = Object.fromEntries(entries);
+    shuffledKeys = Object.keys(shuffledTerms);
+    shuffledValues = Object.values(shuffledTerms);
+    if (shuffledKeys.length > 0) {
+        alert('Going through failed terms');
+        console.log(shuffledTerms);
+        fella.textContent = shuffledKeys[0];
+        currentIndex = 0;
+        currentKey = shuffledKeys[0];
+    }
+    else {
+        alert('No failed terms!');
+        fella.textContent = 'Yippee!';
+    }
+}
+    </script>
+</body>
+</html>
